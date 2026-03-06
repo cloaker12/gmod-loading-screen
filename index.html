@@ -908,10 +908,10 @@
       </div>
       <div class="progress-segments" id="segments"></div>
       <div class="loading-msg" id="loadMsg">ESTABLISHING SECURE CHANNEL </div>
-      <button class="mute-btn" id="muteBtn" onclick="toggleMute()">
+      <div class="mute-btn" id="muteBtn">
         <span class="mute-icon" id="muteIcon">♪</span>
         <span id="muteLabel">MUTE AUDIO</span>
-      </button>
+      </div>
     </div>
   </div>
 
@@ -1206,41 +1206,46 @@ window.DownloadingFile = function(file) {
   // =============================================
   // AUDIO / MUTE
   // =============================================
-  let audioStarted = false;
-
-  function tryPlay() {
-    const audio = document.getElementById('bgAudio');
+  function initAudio() {
+    var audio = document.getElementById('bgAudio');
     if (!audio) return;
-    if (!audioStarted) {
-      audio.play().catch(() => {});
-      audioStarted = true;
-    }
+    audio.volume = 0.5;
+    audio.loop = true;
+    audio.play();
   }
 
   function toggleMute() {
-    const audio = document.getElementById('bgAudio');
+    var audio = document.getElementById('bgAudio');
+    var btn = document.getElementById('muteBtn');
+    var label = document.getElementById('muteLabel');
     if (!audio) return;
-    const btn = document.getElementById('muteBtn');
-    const label = document.getElementById('muteLabel');
-    audio.muted = !audio.muted;
-    if (audio.muted) {
-      label.textContent = 'UNMUTE';
-      btn.classList.add('muted');
+    if (audio.paused) {
+      audio.play();
+      audio.muted = false;
+      label.textContent = 'MUTE AUDIO';
+      if (btn) btn.classList.remove('muted');
     } else {
-      label.textContent = 'MUTE';
-      btn.classList.remove('muted');
-      tryPlay();
+      audio.muted = !audio.muted;
+      if (audio.muted) {
+        label.textContent = 'UNMUTE AUDIO';
+        if (btn) btn.classList.add('muted');
+      } else {
+        label.textContent = 'MUTE AUDIO';
+        if (btn) btn.classList.remove('muted');
+      }
     }
   }
 
-  document.addEventListener('DOMContentLoaded', function() {
-    const audio = document.getElementById('bgAudio');
-    if (!audio) return;
-    audio.volume = 0.5;
-    audio.play().catch(() => {});
-    document.addEventListener('click', tryPlay);
-    document.addEventListener('keydown', tryPlay);
-  });
+  // Attach mute click via JS (GMod blocks onclick on buttons)
+  setTimeout(function() {
+    var btn = document.getElementById('muteBtn');
+    if (btn) btn.addEventListener('click', toggleMute);
+  }, 100);
+
+  // Try multiple ways to start audio for GMod's old browser
+  window.onload = initAudio;
+  setTimeout(initAudio, 500);
+  setTimeout(initAudio, 1500);
 
 </script>
 
