@@ -1165,5 +1165,21 @@ window.DownloadingFile = function(file) {
 
 
 
+
+<audio id="bgAudio" loop autoplay>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+  window.onload = function() {
+    var audio = document.getElementById('bgAudio');
+    if (audio) { audio.volume = 0.5; audio.play(); }
+  };
+  setTimeout(function() {
+    var audio = document.getElementById('bgAudio');
+    if (audio) { audio.volume = 0.5; audio.play(); }
+  }, 500);
+</script>
+
 </body>
 </html>
