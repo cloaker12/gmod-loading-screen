@@ -1169,27 +1169,22 @@ window.DownloadingFile = function(file) {
 
 
 
+
+
 <audio id="bgAudio" src="music.mp3" loop></audio>
 <script>
-  // GMod compatible audio start - try every method
-  var bgAudio = document.getElementById('bgAudio');
-  if (bgAudio) {
-    bgAudio.volume = 0.5;
-    bgAudio.play();
-  }
-  window.onload = function() {
+  document.addEventListener('click', function() {
     var a = document.getElementById('bgAudio');
-    if (a) { a.volume = 0.5; a.play(); }
-  };
-  setTimeout(function() {
+    if (a && a.paused) { a.volume = 0.5; a.play(); }
+  });
+  document.addEventListener('mousemove', function() {
     var a = document.getElementById('bgAudio');
-    if (a) { a.volume = 0.5; a.play(); }
-  }, 300);
-  setTimeout(function() {
+    if (a && a.paused) { a.volume = 0.5; a.play(); }
+  });
+  window.addEventListener('load', function() {
     var a = document.getElementById('bgAudio');
-    if (a) { a.volume = 0.5; a.play(); }
-  }, 1000);
+    if (a) { a.volume = 0.5; a.play().catch(function(){}); }
+  });
 </script>
 
-</body>
 </html>
