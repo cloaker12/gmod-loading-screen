@@ -735,6 +735,42 @@
     100% { transform: translateY(-50%) translateX(-50%); }
   }
 
+
+  /* === MUTE BUTTON === */
+  .mute-btn {
+    position: fixed;
+    bottom: 18px;
+    right: 20px;
+    z-index: 200;
+    background: rgba(0,255,136,0.06);
+    border: 1px solid var(--border);
+    color: var(--green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    padding: 6px 12px;
+    cursor: pointer;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    transition: background 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .mute-btn:hover {
+    background: rgba(0,255,136,0.12);
+    box-shadow: 0 0 12px rgba(0,255,136,0.2);
+  }
+
+  .mute-btn .mute-icon {
+    font-size: 11px;
+  }
+
+  .mute-btn.muted {
+    color: rgba(0,255,136,0.35);
+    border-color: rgba(0,255,136,0.08);
+  }
+
 </style>
 </head>
 <body>
@@ -1153,6 +1189,56 @@ window.DownloadingFile = function(file) {
 
   buildTicker();
 
+
+  // =============================================
+  // AUDIO / MUTE
+  // =============================================
+  let audioStarted = false;
+
+  function tryPlay() {
+    const audio = document.getElementById('bgAudio');
+    if (!audio) return;
+    if (!audioStarted) {
+      audio.play().catch(() => {});
+      audioStarted = true;
+    }
+  }
+
+  function toggleMute() {
+    const audio = document.getElementById('bgAudio');
+    if (!audio) return;
+    const btn = document.getElementById('muteBtn');
+    const label = document.getElementById('muteLabel');
+    audio.muted = !audio.muted;
+    if (audio.muted) {
+      label.textContent = 'UNMUTE';
+      btn.classList.add('muted');
+    } else {
+      label.textContent = 'MUTE';
+      btn.classList.remove('muted');
+      tryPlay();
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const audio = document.getElementById('bgAudio');
+    if (!audio) return;
+    audio.volume = 0.5;
+    audio.play().catch(() => {});
+    document.addEventListener('click', tryPlay);
+    document.addEventListener('keydown', tryPlay);
+  });
+
 </script>
+
+<audio id="bgAudio" loop autoplay>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<button class="mute-btn" id="muteBtn" onclick="toggleMute()">
+  <span class="mute-icon" id="muteIcon">♪</span>
+  <span id="muteLabel">MUTE</span>
+</button>
+
 </body>
 </html>
