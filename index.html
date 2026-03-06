@@ -738,12 +738,8 @@
 
   /* === MUTE BUTTON === */
   .mute-btn {
-    position: fixed;
-    bottom: 18px;
-    left: 20px;
-    z-index: 200;
-    background: rgba(0,255,136,0.06);
-    border: 1px solid var(--border);
+    background: rgba(0,255,136,0.08);
+    border: 1px solid rgba(0,255,136,0.4);
     color: var(--green);
     font-family: 'Share Tech Mono', monospace;
     font-size: 9px;
@@ -755,20 +751,33 @@
     display: flex;
     align-items: center;
     gap: 7px;
+    width: 100%;
+    box-shadow: 0 0 10px rgba(0,255,136,0.25), inset 0 0 8px rgba(0,255,136,0.05);
+    text-shadow: 0 0 8px var(--green);
+    margin-top: 8px;
   }
 
   .mute-btn:hover {
-    background: rgba(0,255,136,0.12);
-    box-shadow: 0 0 12px rgba(0,255,136,0.2);
+    background: rgba(0,255,136,0.15);
+    box-shadow: 0 0 20px rgba(0,255,136,0.4), inset 0 0 10px rgba(0,255,136,0.08);
   }
 
   .mute-btn .mute-icon {
-    font-size: 11px;
+    font-size: 13px;
+    text-shadow: 0 0 10px var(--green);
+    animation: pulse 2s ease-in-out infinite;
   }
 
   .mute-btn.muted {
-    color: rgba(0,255,136,0.35);
-    border-color: rgba(0,255,136,0.08);
+    color: rgba(0,255,136,0.3);
+    border-color: rgba(0,255,136,0.1);
+    box-shadow: none;
+    text-shadow: none;
+  }
+
+  .mute-btn.muted .mute-icon {
+    animation: none;
+    text-shadow: none;
   }
 
 </style>
@@ -899,6 +908,10 @@
       </div>
       <div class="progress-segments" id="segments"></div>
       <div class="loading-msg" id="loadMsg">ESTABLISHING SECURE CHANNEL </div>
+      <button class="mute-btn" id="muteBtn" onclick="toggleMute()">
+        <span class="mute-icon" id="muteIcon">♪</span>
+        <span id="muteLabel">MUTE AUDIO</span>
+      </button>
     </div>
   </div>
 
@@ -1235,10 +1248,6 @@ window.DownloadingFile = function(file) {
   <source src="music.mp3" type="audio/mpeg">
 </audio>
 
-<button class="mute-btn" id="muteBtn" onclick="toggleMute()">
-  <span class="mute-icon" id="muteIcon">♪</span>
-  <span id="muteLabel">MUTE</span>
-</button>
 
 </body>
 </html>
