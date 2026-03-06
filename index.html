@@ -762,7 +762,7 @@
       <div class="logo-sub">GHOST RECONDITION // ZOMBIE SURVIVAL</div>
     </div>
     <div class="top-center">
-      <div class="op-name" id="mapName">GMOD SANDBOX</div>
+      <div class="op-name" id="mapName">LOADING...</div>
       <div class="op-sub">ZOMBIE SURVIVAL PROTOCOL INITIATED</div>
     </div>
     <div class="top-right">
@@ -823,11 +823,11 @@
     <!-- Mission data -->
     <div class="panel-block">
       <div class="block-label">OPERATION DATA</div>
-      <div class="data-row"><span>OBJECTIVE</span><span class="val">SANDBOX</span></div>
-      <div class="data-row"><span>CLASSIFY</span><span class="val warn">SECRET</span></div>
+      <div class="data-row"><span>OBJECTIVE</span><span class="val">SURVIVE</span></div>
+      <div class="data-row"><span>CLASSIFY</span><span class="val warn">HOSTILE</span></div>
       <div class="data-row"><span>PLAYERS</span><span class="val" id="playerCount">--</span></div>
-      <div class="data-row"><span>MAP SIZE</span><span class="val">MEDIUM</span></div>
-      <div class="data-row"><span>EXTRACT</span><span class="val crit">TBD</span></div>
+      <div class="data-row"><span>MAP SIZE</span><span class="val" id="mapSize">LOADING</span></div>
+      <div class="data-row"><span>EXTRACT</span><span class="val crit">NO EVAC</span></div>
     </div>
 
   </div>
@@ -878,7 +878,7 @@
     <div class="panel-block">
       <div class="block-label">GHOST RECONDITION SERVER</div>
       <div class="server-name" id="serverDisplay">LOADING...</div>
-      <div class="data-row"><span>GAMEMODE</span><span class="val">SANDBOX</span></div>
+      <div class="data-row"><span>GAMEMODE</span><span class="val">ZOMBIE SURVIVAL</span></div>
       <div class="data-row"><span>REGION</span><span class="val">US-EAST</span></div>
       <div class="data-row"><span>LATENCY</span><span class="val" id="latencyDisp">--</span></div>
       <div class="threat-display">
@@ -949,7 +949,7 @@ const CONFIG = {
   serverIP: "127.0.0.1:27015",
   mapName: "gm_construct",
   maxPlayers: 32,
-  gamemode: "SANDBOX"
+  gamemode: "ZOMBIE SURVIVAL"
 };
 
 // =============================================
@@ -1166,19 +1166,29 @@ window.DownloadingFile = function(file) {
 
 
 
-<audio id="bgAudio" loop autoplay>
-  <source src="music.mp3" type="audio/mpeg">
-</audio>
 
+
+
+<audio id="bgAudio" src="music.mp3" loop></audio>
 <script>
+  // GMod compatible audio start - try every method
+  var bgAudio = document.getElementById('bgAudio');
+  if (bgAudio) {
+    bgAudio.volume = 0.5;
+    bgAudio.play();
+  }
   window.onload = function() {
-    var audio = document.getElementById('bgAudio');
-    if (audio) { audio.volume = 0.5; audio.play(); }
+    var a = document.getElementById('bgAudio');
+    if (a) { a.volume = 0.5; a.play(); }
   };
   setTimeout(function() {
-    var audio = document.getElementById('bgAudio');
-    if (audio) { audio.volume = 0.5; audio.play(); }
-  }, 500);
+    var a = document.getElementById('bgAudio');
+    if (a) { a.volume = 0.5; a.play(); }
+  }, 300);
+  setTimeout(function() {
+    var a = document.getElementById('bgAudio');
+    if (a) { a.volume = 0.5; a.play(); }
+  }, 1000);
 </script>
 
 </body>
