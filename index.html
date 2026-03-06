@@ -736,49 +736,9 @@
   }
 
 
-  /* === MUTE BUTTON === */
-  .mute-btn {
-    background: rgba(0,255,136,0.08);
-    border: 1px solid rgba(0,255,136,0.4);
-    color: var(--green);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 3px;
-    padding: 6px 12px;
-    cursor: pointer;
-    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
-    transition: background 0.2s, box-shadow 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    width: 100%;
-    box-shadow: 0 0 10px rgba(0,255,136,0.25), inset 0 0 8px rgba(0,255,136,0.05);
-    text-shadow: 0 0 8px var(--green);
-    margin-top: 8px;
-  }
+  
 
-  .mute-btn:hover {
-    background: rgba(0,255,136,0.15);
-    box-shadow: 0 0 20px rgba(0,255,136,0.4), inset 0 0 10px rgba(0,255,136,0.08);
-  }
-
-  .mute-btn .mute-icon {
-    font-size: 13px;
-    text-shadow: 0 0 10px var(--green);
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  .mute-btn.muted {
-    color: rgba(0,255,136,0.3);
-    border-color: rgba(0,255,136,0.1);
-    box-shadow: none;
-    text-shadow: none;
-  }
-
-  .mute-btn.muted .mute-icon {
-    animation: none;
-    text-shadow: none;
-  }
+  
 
 </style>
 </head>
@@ -908,10 +868,6 @@
       </div>
       <div class="progress-segments" id="segments"></div>
       <div class="loading-msg" id="loadMsg">ESTABLISHING SECURE CHANNEL </div>
-      <div class="mute-btn" id="muteBtn">
-        <span class="mute-icon" id="muteIcon">♪</span>
-        <span id="muteLabel">MUTE AUDIO</span>
-      </div>
     </div>
   </div>
 
@@ -1203,66 +1159,10 @@ window.DownloadingFile = function(file) {
   buildTicker();
 
 
-  // =============================================
-  // AUDIO / MUTE
-  // =============================================
-  function initAudio() {
-    var audio = document.getElementById('bgAudio');
-    if (!audio) return;
-    audio.volume = 0.5;
-    audio.loop = true;
-    audio.play();
-  }
-
-  function toggleMute() {
-    var audio = document.getElementById('bgAudio');
-    var btn = document.getElementById('muteBtn');
-    var label = document.getElementById('muteLabel');
-    if (!audio) return;
-    if (audio.paused) {
-      audio.play();
-      audio.muted = false;
-      label.textContent = 'MUTE AUDIO';
-      if (btn) btn.classList.remove('muted');
-    } else {
-      audio.muted = !audio.muted;
-      if (audio.muted) {
-        label.textContent = 'UNMUTE AUDIO';
-        if (btn) btn.classList.add('muted');
-      } else {
-        label.textContent = 'MUTE AUDIO';
-        if (btn) btn.classList.remove('muted');
-      }
-    }
-  }
-
-  // Enable mouse input in GMod loading screen
-  if (typeof SetMouseInputEnabled !== 'undefined') {
-    SetMouseInputEnabled(true);
-  }
-  // Keep re-enabling it as GMod can reset it
-  setInterval(function() {
-    if (typeof SetMouseInputEnabled !== 'undefined') {
-      SetMouseInputEnabled(true);
-    }
-  }, 500);
-
-  // Attach mute click via JS (GMod blocks onclick on buttons)
-  setTimeout(function() {
-    var btn = document.getElementById('muteBtn');
-    if (btn) btn.addEventListener('click', toggleMute);
-  }, 100);
-
-  // Try multiple ways to start audio for GMod's old browser
-  window.onload = initAudio;
-  setTimeout(initAudio, 500);
-  setTimeout(initAudio, 1500);
+  
 
 </script>
 
-<audio id="bgAudio" loop autoplay>
-  <source src="music.mp3" type="audio/mpeg">
-</audio>
 
 
 </body>
