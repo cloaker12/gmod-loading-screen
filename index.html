@@ -1236,6 +1236,17 @@ window.DownloadingFile = function(file) {
     }
   }
 
+  // Enable mouse input in GMod loading screen
+  if (typeof SetMouseInputEnabled !== 'undefined') {
+    SetMouseInputEnabled(true);
+  }
+  // Keep re-enabling it as GMod can reset it
+  setInterval(function() {
+    if (typeof SetMouseInputEnabled !== 'undefined') {
+      SetMouseInputEnabled(true);
+    }
+  }, 500);
+
   // Attach mute click via JS (GMod blocks onclick on buttons)
   setTimeout(function() {
     var btn = document.getElementById('muteBtn');
