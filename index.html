@@ -3,26 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GHOST RECONDITION // LOADING</title>
+<title>ZCITY // CONNECTING</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap');
 
   :root {
-    --green: #00ff88;
-    --green-dim: #00cc6a;
-    --green-dark: #003322;
-    --amber: #ffaa00;
-    --red: #ff2244;
-    --bg: #020a06;
-    --panel: rgba(0, 255, 136, 0.04);
-    --border: rgba(0, 255, 136, 0.15);
+    --red:        #ff2233;
+    --red-dim:    #cc1122;
+    --red-dark:   #1a0005;
+    --amber:      #ffaa00;
+    --green-ok:   #44ff88;
+    --white:      #e8ddd0;
+    --white-dim:  rgba(232,221,208,0.85);
+    --white-faint:rgba(232,221,208,0.55);
+    --bg:         #0a0608;
+    --panel:      rgba(255,34,51,0.04);
+    --border:     rgba(255,34,51,0.18);
+    --border-w:   rgba(232,221,208,0.08);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     background: var(--bg);
-    color: var(--green);
+    color: var(--white);
     font-family: 'Share Tech Mono', monospace;
     height: 100vh;
     overflow: hidden;
@@ -30,724 +34,304 @@
     cursor: none;
   }
 
-  /* Scanlines overlay */
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.18) 2px,
-      rgba(0,0,0,0.18) 4px
-    );
-    pointer-events: none;
-    z-index: 100;
-    animation: scanShift 8s linear infinite;
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px);
+    pointer-events: none; z-index: 100;
+    animation: scanShift 10s linear infinite;
   }
 
-  /* CRT vignette */
   body::after {
     content: '';
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.85) 100%);
-    pointer-events: none;
-    z-index: 99;
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.92) 100%);
+    pointer-events: none; z-index: 99;
   }
 
-  @keyframes scanShift {
-    0% { background-position: 0 0; }
-    100% { background-position: 0 100px; }
-  }
+  @keyframes scanShift { 0%{background-position:0 0} 100%{background-position:0 100px} }
 
-  /* Noise texture */
   .noise {
-    position: fixed;
-    inset: 0;
-    opacity: 0.035;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-    background-size: 128px 128px;
-    pointer-events: none;
-    z-index: 98;
+    position: fixed; inset: 0; opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 128px 128px; pointer-events: none; z-index: 98;
   }
 
-  /* === LAYOUT === */
+  .blood-vignette {
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at 0% 0%, rgba(180,0,20,0.12) 0%, transparent 45%),
+                radial-gradient(ellipse at 100% 100%, rgba(180,0,20,0.12) 0%, transparent 45%);
+    pointer-events: none; z-index: 97;
+  }
+
+  .scan-sweep {
+    position: fixed; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,34,51,0.45), transparent);
+    animation: sweepDown 4s linear infinite;
+    pointer-events: none; z-index: 50;
+  }
+  @keyframes sweepDown { 0%{top:-2px;opacity:0} 5%{opacity:1} 95%{opacity:1} 100%{top:100vh;opacity:0} }
+
+  /* LAYOUT */
   .screen {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
+    position: relative; width: 100vw; height: 100vh;
     display: grid;
-    grid-template-rows: auto 1fr auto;
-    grid-template-columns: 280px 1fr 280px;
-    gap: 0;
-    padding: 20px;
-    z-index: 10;
+    grid-template-rows: auto 1fr auto auto;
+    grid-template-columns: 260px 1fr 260px;
+    padding: 18px; z-index: 10;
   }
 
-  /* === TOP BAR === */
+  /* TOP BAR */
   .top-bar {
-    grid-column: 1 / -1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 14px;
+    grid-column: 1/-1;
+    display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 12px;
     border-bottom: 1px solid var(--border);
-    margin-bottom: 16px;
-    animation: fadeIn 0.5s ease forwards;
+    margin-bottom: 14px;
+    animation: fadeIn .4s ease forwards;
   }
 
-  .logo-block {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
+  .logo-block { display:flex; flex-direction:column; gap:2px; }
   .logo-main {
     font-family: 'Orbitron', monospace;
-    font-size: 11px;
-    font-weight: 900;
-    letter-spacing: 6px;
-    color: var(--green);
-    text-shadow: 0 0 12px var(--green);
+    font-size: 22px; font-weight: 900; letter-spacing: 8px;
+    color: var(--red);
+    text-shadow: 0 0 16px var(--red), 0 0 32px rgba(255,34,51,0.3);
+    animation: glitch 5s infinite;
   }
+  .logo-sub { font-size: 8px; letter-spacing: 5px; color: rgba(255,34,51,0.8); }
 
-  .logo-sub {
-    font-size: 9px;
-    letter-spacing: 4px;
-    color: rgba(0,255,136,0.4);
-  }
-
-  .top-center {
-    text-align: center;
-  }
-
+  .top-center { text-align: center; }
   .op-name {
     font-family: 'Orbitron', monospace;
-    font-size: 20px;
-    font-weight: 900;
-    letter-spacing: 8px;
-    color: var(--green);
-    text-shadow: 0 0 20px var(--green), 0 0 40px rgba(0,255,136,0.3);
-    animation: glitch 4s infinite;
+    font-size: 13px; font-weight: 700; letter-spacing: 6px;
+    color: var(--white);
+    text-shadow: 0 0 10px rgba(232,221,208,0.4);
+    animation: flicker 6s infinite;
   }
+  .op-sub { font-size: 8px; letter-spacing: 4px; color: rgba(232,221,208,0.75); margin-top: 3px; }
 
-  .op-sub {
-    font-size: 9px;
-    letter-spacing: 5px;
-    color: rgba(0,255,136,0.5);
-    margin-top: 3px;
-  }
+  .top-right { text-align: right; display:flex; flex-direction:column; gap:3px; }
+  .status-row { font-size: 8px; letter-spacing: 2px; color: rgba(232,221,208,0.8); }
+  .status-row span { color: var(--amber); }
 
-  .top-right {
-    text-align: right;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  .status-row {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: rgba(0,255,136,0.5);
-  }
-
-  .status-row span {
-    color: var(--amber);
-  }
-
-  /* === LEFT PANEL === */
-  .left-panel {
-    grid-column: 1;
-    grid-row: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    animation: slideLeft 0.6s ease forwards;
-    padding-right: 16px;
-    border-right: 1px solid var(--border);
-  }
-
+  /* PANEL */
   .panel-block {
     background: var(--panel);
     border: 1px solid var(--border);
-    padding: 10px 12px;
+    padding: 9px 11px;
     position: relative;
-    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
   }
-
   .panel-block::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
+    content: ''; position: absolute; top: 0; left: 0;
     width: 100%; height: 1px;
-    background: linear-gradient(90deg, var(--green), transparent);
-    opacity: 0.5;
+    background: linear-gradient(90deg, var(--red), transparent); opacity: .6;
   }
+  .block-label { font-size: 7px; letter-spacing: 3px; color: rgba(255,34,51,0.9); margin-bottom: 8px; text-transform: uppercase; }
 
-  .block-label {
-    font-size: 8px;
-    letter-spacing: 3px;
-    color: rgba(0,255,136,0.4);
-    margin-bottom: 8px;
-    text-transform: uppercase;
-  }
-
-  .data-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 10px;
-    margin-bottom: 4px;
-    color: rgba(0,255,136,0.7);
-  }
-
-  .data-row .val {
-    color: var(--green);
-    font-weight: bold;
-  }
-
+  .data-row { display:flex; justify-content:space-between; font-size:9px; margin-bottom:4px; color:rgba(232,221,208,0.85); }
+  .data-row .val { color: var(--white); font-weight: bold; }
   .data-row .val.warn { color: var(--amber); }
-  .data-row .val.crit { color: var(--red); }
+  .data-row .val.crit { color: var(--red); text-shadow: 0 0 5px var(--red); }
 
-  .agent-card {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  /* LEFT */
+  .left-panel {
+    grid-column:1; grid-row:2;
+    display:flex; flex-direction:column; gap:10px;
+    animation: slideLeft .5s ease forwards;
+    padding-right:14px; border-right:1px solid var(--border);
   }
 
+  .agent-card { display:flex; align-items:center; gap:10px; }
   .agent-silhouette {
-    width: 44px;
-    height: 56px;
-    background: rgba(0,255,136,0.06);
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    clip-path: polygon(10% 0%, 90% 0%, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0% 90%, 0% 10%);
-    flex-shrink: 0;
+    width:42px; height:54px;
+    background: rgba(255,34,51,0.06);
+    border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    clip-path: polygon(10% 0%,90% 0%,100% 10%,100% 90%,90% 100%,10% 100%,0% 90%,0% 10%);
+    flex-shrink:0;
   }
+  .agent-silhouette svg { width:26px; height:38px; fill:none; stroke:var(--red); stroke-width:1.5; opacity:.8; }
+  .agent-info { flex:1; }
+  .agent-name { font-family:'Orbitron',monospace; font-size:10px; font-weight:700; color:var(--white); letter-spacing:2px; }
+  .agent-rank { font-size:8px; color:rgba(232,221,208,0.75); letter-spacing:2px; margin-top:2px; }
+  .agent-status { font-size:8px; color:var(--red); letter-spacing:1px; margin-top:4px; animation:blink 2s step-end infinite; }
 
-  .agent-silhouette svg {
-    width: 28px;
-    height: 40px;
-    fill: none;
-    stroke: var(--green);
-    stroke-width: 1.5;
-    opacity: 0.7;
+  .organ-row {
+    display:flex; justify-content:space-between;
+    font-size:8px; color:rgba(232,221,208,0.85);
+    padding:2px 0; border-bottom:1px solid rgba(255,34,51,0.06);
   }
+  .organ-val.ok   { color:var(--green-ok); }
+  .organ-val.warn { color:var(--amber); }
+  .organ-val.crit { color:var(--red); animation:blink 1s step-end infinite; }
 
-  .agent-info { flex: 1; }
-  .agent-name {
-    font-family: 'Orbitron', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--green);
-    letter-spacing: 2px;
-  }
-  .agent-rank { font-size: 9px; color: rgba(0,255,136,0.5); letter-spacing: 2px; margin-top: 2px; }
-  .agent-status { font-size: 8px; color: var(--amber); letter-spacing: 1px; margin-top: 4px; }
-
-  /* Mini bar charts */
-  .mini-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 5px;
-  }
-  .mini-bar-label { font-size: 8px; color: rgba(0,255,136,0.5); width: 60px; letter-spacing: 1px; }
-  .mini-bar-track {
-    flex: 1;
-    height: 4px;
-    background: rgba(0,255,136,0.08);
-    border: 1px solid rgba(0,255,136,0.1);
-    position: relative;
-    overflow: hidden;
-  }
-  .mini-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--green-dim), var(--green));
-    box-shadow: 0 0 6px var(--green);
-    animation: barGrow 1.5s ease-out forwards;
-    transform-origin: left;
-    transform: scaleX(0);
-  }
-  .mini-bar-val { font-size: 8px; color: var(--green); width: 30px; text-align: right; }
-
-  @keyframes barGrow {
-    to { transform: scaleX(1); }
-  }
-
-  /* === CENTER === */
+  /* CENTER */
   .center-panel {
-    grid-column: 2;
-    grid-row: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    padding: 0 30px;
-    position: relative;
+    grid-column:2; grid-row:2;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:16px; padding:0 28px; position:relative;
   }
 
-  /* Hex grid background */
   .hex-bg {
-    position: absolute;
-    inset: 0;
-    opacity: 0.04;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50V18L28 2l28 16v32L28 66zM28 100L0 84V52l28-16 28 16v32L28 100z' fill='none' stroke='%2300ff88' stroke-width='0.5'/%3E%3C/svg%3E");
-    pointer-events: none;
+    position:absolute; inset:0; opacity:.025;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cline x1='0' y1='0' x2='40' y2='40' stroke='%23ff2233' stroke-width='0.4'/%3E%3Cline x1='40' y1='0' x2='0' y2='40' stroke='%23ff2233' stroke-width='0.4'/%3E%3C/svg%3E");
+    background-size:40px 40px; pointer-events:none;
   }
 
-  /* Main tactical globe / compass */
-  .tac-display {
-    position: relative;
-    width: 200px;
-    height: 200px;
-  }
-
+  .tac-display { position:relative; width:180px; height:180px; }
   .tac-ring {
-    position: absolute;
-    border-radius: 50%;
-    border: 1px solid var(--border);
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
+    position:absolute; border-radius:50%;
+    border:1px solid var(--border);
+    top:50%; left:50%; transform:translate(-50%,-50%);
   }
-
-  .ring-1 { width: 200px; height: 200px; animation: spin 20s linear infinite; }
-  .ring-2 { width: 160px; height: 160px; animation: spin 12s linear infinite reverse; border-style: dashed; border-color: rgba(0,255,136,0.2); }
-  .ring-3 { width: 110px; height: 110px; border-color: rgba(0,255,136,0.25); }
-  .ring-4 { width: 60px; height: 60px; animation: spin 5s linear infinite; border-color: rgba(0,255,136,0.4); }
-
+  .ring-1 { width:180px;height:180px; border-color:rgba(255,34,51,.2); animation:spin 18s linear infinite; }
+  .ring-2 { width:140px;height:140px; border-style:dashed; border-color:rgba(255,34,51,.12); animation:spin 10s linear infinite reverse; }
+  .ring-3 { width:96px; height:96px;  border-color:rgba(255,34,51,.2); }
+  .ring-4 { width:50px; height:50px;  border-color:rgba(255,34,51,.35); animation:spin 4s linear infinite; }
   .ring-1::before {
-    content: '';
-    position: absolute;
-    top: -4px; left: 50%;
-    transform: translateX(-50%);
-    width: 8px; height: 8px;
-    background: var(--green);
-    border-radius: 50%;
-    box-shadow: 0 0 12px var(--green);
+    content:''; position:absolute; top:-3px; left:50%; transform:translateX(-50%);
+    width:6px;height:6px; background:var(--red); border-radius:50%; box-shadow:0 0 10px var(--red);
   }
-
   .ring-4::before {
-    content: '';
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 10px; height: 10px;
-    background: var(--green);
-    border-radius: 50%;
-    box-shadow: 0 0 20px var(--green), 0 0 40px rgba(0,255,136,0.4);
-    animation: pulse 1.5s ease-in-out infinite;
+    content:''; position:absolute; top:50%;left:50%; transform:translate(-50%,-50%);
+    width:8px;height:8px; background:var(--red); border-radius:50%;
+    box-shadow:0 0 16px var(--red),0 0 32px rgba(255,34,51,.4);
+    animation:pulse 1.5s ease-in-out infinite;
   }
+  .crosshair-h,.crosshair-v { position:absolute; top:50%;left:50%; background:rgba(255,34,51,.1); }
+  .crosshair-h { width:180px;height:1px; transform:translate(-50%,-50%); }
+  .crosshair-v { width:1px;height:180px; transform:translate(-50%,-50%); }
+  .coord-label { position:absolute; font-size:7px; color:rgba(255,34,51,.85); letter-spacing:1px; }
+  .coord-n { top:3px;left:50%;transform:translateX(-50%); }
+  .coord-s { bottom:3px;left:50%;transform:translateX(-50%); }
+  .coord-e { right:3px;top:50%;transform:translateY(-50%); }
+  .coord-w { left:3px;top:50%;transform:translateY(-50%); }
 
-  /* Tick marks on outer ring */
-  .ring-ticks {
-    position: absolute;
-    width: 200px; height: 200px;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-  }
+  .blip { position:absolute; border-radius:50%; animation:blipPulse 2.5s ease-in-out infinite; }
+  .blip.friendly { width:5px;height:5px; background:var(--green-ok); box-shadow:0 0 6px var(--green-ok); }
+  .blip.enemy    { width:4px;height:4px; background:var(--red);      box-shadow:0 0 6px var(--red); }
+  .blip:nth-child(1){top:42%;left:35%;animation-delay:0s}
+  .blip:nth-child(2){top:55%;left:60%;animation-delay:.7s}
+  .blip:nth-child(3){top:30%;left:52%;animation-delay:1.1s}
+  .blip:nth-child(4){top:65%;left:38%;animation-delay:.4s}
+  .blip:nth-child(5){top:38%;left:65%;animation-delay:1.6s}
 
-  .tick {
-    position: absolute;
-    width: 1px;
-    background: rgba(0,255,136,0.35);
-    top: 50%;
-    left: 50%;
-    transform-origin: 0 0;
-  }
+  @keyframes blipPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(1.8)} }
+  @keyframes spin  { to{transform:translate(-50%,-50%) rotate(360deg)} }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 8px var(--red),0 0 16px rgba(255,34,51,.3)} 50%{box-shadow:0 0 18px var(--red),0 0 40px rgba(255,34,51,.6)} }
 
-  .crosshair-h, .crosshair-v {
-    position: absolute;
-    background: rgba(0,255,136,0.12);
-    top: 50%; left: 50%;
-  }
-  .crosshair-h { width: 200px; height: 1px; transform: translate(-50%, -50%); }
-  .crosshair-v { width: 1px; height: 200px; transform: translate(-50%, -50%); }
-
-  .coord-label {
-    position: absolute;
-    font-size: 8px;
-    color: rgba(0,255,136,0.4);
-    letter-spacing: 1px;
-  }
-  .coord-n { top: 4px; left: 50%; transform: translateX(-50%); }
-  .coord-s { bottom: 4px; left: 50%; transform: translateX(-50%); }
-  .coord-e { right: 4px; top: 50%; transform: translateY(-50%); }
-  .coord-w { left: 4px; top: 50%; transform: translateY(-50%); }
-
-  @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
-  @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 10px var(--green), 0 0 20px rgba(0,255,136,0.3); }
-    50% { box-shadow: 0 0 20px var(--green), 0 0 50px rgba(0,255,136,0.6); }
-  }
-
-  /* Map name */
   .map-title {
-    font-family: 'Orbitron', monospace;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 5px;
-    text-align: center;
-    color: var(--green);
-    text-shadow: 0 0 15px var(--green);
-    animation: flicker 5s infinite;
+    font-family:'Orbitron',monospace; font-size:13px; font-weight:700;
+    letter-spacing:5px; text-align:center; color:var(--white);
+    text-shadow:0 0 10px rgba(232,221,208,.3); animation:flicker 6s infinite;
   }
+  .map-coords { font-size:8px; letter-spacing:3px; color:rgba(232,221,208,.75); text-align:center; }
 
-  .map-coords {
-    font-size: 9px;
-    letter-spacing: 3px;
-    color: rgba(0,255,136,0.4);
-    text-align: center;
-  }
+  .progress-section { width:100%; max-width:460px; }
+  .progress-header { display:flex; justify-content:space-between; font-size:8px; letter-spacing:2px; color:rgba(232,221,208,.85); margin-bottom:5px; }
+  .progress-pct { color:var(--red); font-weight:bold; font-size:10px; }
+  .progress-track { width:100%;height:5px; background:rgba(255,34,51,.18); border:1px solid rgba(255,34,51,.5); box-shadow:0 0 6px rgba(255,34,51,.25), inset 0 0 4px rgba(255,34,51,.15); overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,#1a0005,var(--red-dim),var(--red)); box-shadow:0 0 8px var(--red); transition:width .3s ease; position:relative; }
+  .progress-fill::after { content:''; position:absolute; right:0;top:0; width:2px;height:100%; background:#fff; box-shadow:0 0 6px var(--red); animation:blink .5s step-end infinite; }
+  .progress-segments { display:flex; gap:2px; margin-top:3px; }
+  .seg { flex:1; height:2px; background:rgba(255,34,51,.25); border:1px solid rgba(255,34,51,.35); transition:background .3s; }
+  .seg.done { background:var(--red); box-shadow:0 0 3px var(--red); }
+  .loading-msg { font-size:8px; letter-spacing:2px; color:rgba(232,221,208,.8); margin-top:5px; min-height:13px; }
+  .loading-msg::after { content:'█'; animation:blink 1s step-end infinite; color:var(--red); }
+  @keyframes blink { 50%{opacity:0} }
 
-  /* === PROGRESS === */
-  .progress-section {
-    width: 100%;
-    max-width: 480px;
-  }
-
-  .progress-header {
-    display: flex;
-    justify-content: space-between;
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: rgba(0,255,136,0.5);
-    margin-bottom: 6px;
-  }
-
-  .progress-pct {
-    color: var(--green);
-    font-weight: bold;
-    font-size: 11px;
-  }
-
-  .progress-track {
-    width: 100%;
-    height: 6px;
-    background: rgba(0,255,136,0.05);
-    border: 1px solid rgba(0,255,136,0.15);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #003322, var(--green-dim), var(--green));
-    box-shadow: 0 0 10px var(--green);
-    transition: width 0.3s ease;
-    position: relative;
-  }
-
-  .progress-fill::after {
-    content: '';
-    position: absolute;
-    right: 0; top: 0;
-    width: 3px; height: 100%;
-    background: white;
-    box-shadow: 0 0 8px var(--green);
-    animation: blink 0.5s step-end infinite;
-  }
-
-  .progress-segments {
-    display: flex;
-    gap: 2px;
-    margin-top: 4px;
-  }
-
-  .seg {
-    flex: 1;
-    height: 2px;
-    background: rgba(0,255,136,0.1);
-    transition: background 0.3s;
-  }
-  .seg.done { background: var(--green); box-shadow: 0 0 4px var(--green); }
-
-  .loading-msg {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: rgba(0,255,136,0.45);
-    margin-top: 6px;
-    min-height: 14px;
-  }
-
-  .loading-msg::after {
-    content: '█';
-    animation: blink 1s step-end infinite;
-    color: var(--green);
-  }
-
-  @keyframes blink { 50% { opacity: 0; } }
-
-  /* === RIGHT PANEL === */
+  /* RIGHT */
   .right-panel {
-    grid-column: 3;
-    grid-row: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    animation: slideRight 0.6s ease forwards;
-    padding-left: 16px;
-    border-left: 1px solid var(--border);
+    grid-column:3; grid-row:2;
+    display:flex; flex-direction:column; gap:10px;
+    animation:slideRight .5s ease forwards;
+    padding-left:14px; border-left:1px solid var(--border);
   }
 
-  /* Activity log */
-  .log-lines {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    max-height: 140px;
-    overflow: hidden;
-  }
+  .log-lines { display:flex; flex-direction:column; gap:3px; max-height:130px; overflow:hidden; }
+  .log-line { font-size:8px; color:rgba(232,221,208,.8); letter-spacing:1px; display:flex; gap:7px; animation:logIn .3s ease forwards; opacity:0; }
+  .log-line .ts { color:rgba(232,221,208,.5); flex-shrink:0; }
+  .log-line .ok   { color:var(--green-ok); }
+  .log-line .warn { color:var(--amber); }
+  .log-line .err  { color:var(--red); }
+  @keyframes logIn { from{opacity:0;transform:translateX(6px)} to{opacity:1;transform:translateX(0)} }
 
-  .log-line {
-    font-size: 9px;
-    color: rgba(0,255,136,0.45);
-    letter-spacing: 1px;
-    display: flex;
-    gap: 8px;
-    animation: logIn 0.3s ease forwards;
-    opacity: 0;
-  }
+  .server-name { font-family:'Orbitron',monospace; font-size:10px; font-weight:700; color:var(--white); letter-spacing:2px; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-  .log-line .ts { color: rgba(0,255,136,0.25); flex-shrink: 0; }
-  .log-line .ok { color: var(--green); }
-  .log-line .warn { color: var(--amber); }
-  .log-line .err { color: var(--red); }
+  .threat-display { display:flex; align-items:center; gap:5px; margin-top:4px; }
+  .threat-label { font-size:7px; letter-spacing:2px; color:rgba(232,221,208,.8); }
+  .threat-bars { display:flex; gap:2px; }
+  .threat-bar { width:9px;height:12px; background:rgba(255,34,51,.15); border:1px solid rgba(255,34,51,.3); box-shadow:inset 0 0 3px rgba(255,34,51,.1); }
+  .threat-bar.l1,.threat-bar.l2 { background:var(--green-ok); box-shadow:0 0 3px var(--green-ok); border-color:var(--green-ok); }
+  .threat-bar.l3 { background:var(--amber); box-shadow:0 0 3px var(--amber); border-color:var(--amber); }
+  .threat-bar.l4 { background:var(--red);   box-shadow:0 0 3px var(--red);   border-color:var(--red); }
 
-  @keyframes logIn {
-    from { opacity: 0; transform: translateX(8px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-
-  /* Server info */
-  .server-name {
-    font-family: 'Orbitron', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--green);
-    letter-spacing: 2px;
-    margin-bottom: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  /* Threat meter */
-  .threat-display {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 4px;
-  }
-
-  .threat-label { font-size: 8px; letter-spacing: 2px; color: rgba(0,255,136,0.4); }
-
-  .threat-bars {
-    display: flex;
-    gap: 2px;
-  }
-
-  .threat-bar {
-    width: 10px;
-    height: 14px;
-    background: rgba(0,255,136,0.08);
-    border: 1px solid rgba(0,255,136,0.1);
-  }
-
-  .threat-bar.l1, .threat-bar.l2 { background: var(--green); box-shadow: 0 0 4px var(--green); border-color: var(--green); }
-  .threat-bar.l3, .threat-bar.l4 { background: var(--amber); box-shadow: 0 0 4px var(--amber); border-color: var(--amber); }
-
-  /* === BOTTOM BAR === */
-  .bottom-bar {
-    grid-column: 1 / -1;
-    border-top: 1px solid var(--border);
-    padding-top: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    animation: fadeIn 0.8s ease forwards;
-  }
-
-  .tip-text {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: rgba(0,255,136,0.35);
-    max-width: 600px;
-  }
-
-  .tip-text strong {
-    color: rgba(0,255,136,0.65);
-  }
-
-  .sys-clocks {
-    display: flex;
-    gap: 20px;
-  }
-
-  .clock {
-    text-align: right;
-  }
-
-  .clock-label {
-    font-size: 7px;
-    letter-spacing: 2px;
-    color: rgba(0,255,136,0.3);
-    display: block;
-  }
-
-  .clock-val {
-    font-family: 'Orbitron', monospace;
-    font-size: 11px;
-    color: var(--green);
-    letter-spacing: 2px;
-  }
-
-  /* Corner decorations */
-  .corner {
-    position: fixed;
-    width: 30px;
-    height: 30px;
-    z-index: 11;
-  }
-  .corner-tl { top: 8px; left: 8px; border-top: 2px solid var(--green); border-left: 2px solid var(--green); }
-  .corner-tr { top: 8px; right: 8px; border-top: 2px solid var(--green); border-right: 2px solid var(--green); }
-  .corner-bl { bottom: 8px; left: 8px; border-bottom: 2px solid var(--green); border-left: 2px solid var(--green); }
-  .corner-br { bottom: 8px; right: 8px; border-bottom: 2px solid var(--green); border-right: 2px solid var(--green); }
-
-  /* Animations */
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes slideLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
-  @keyframes slideRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-
-  @keyframes glitch {
-    0%, 90%, 100% { transform: none; text-shadow: 0 0 20px var(--green), 0 0 40px rgba(0,255,136,0.3); }
-    91% { transform: translateX(-2px); text-shadow: -2px 0 var(--red), 2px 0 #00ffff; }
-    92% { transform: translateX(2px); text-shadow: 2px 0 var(--red), -2px 0 #00ffff; }
-    93% { transform: none; }
-  }
-
-  @keyframes flicker {
-    0%, 95%, 100% { opacity: 1; }
-    96% { opacity: 0.6; }
-    97% { opacity: 1; }
-    98% { opacity: 0.4; }
-    99% { opacity: 1; }
-  }
-
-  /* Horizontal scan line that sweeps */
-  .scan-sweep {
-    position: fixed;
-    left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(0,255,136,0.4), transparent);
-    animation: sweepDown 3s linear infinite;
-    pointer-events: none;
-    z-index: 50;
-  }
-
-  @keyframes sweepDown {
-    0% { top: -2px; }
-    100% { top: 100vh; }
-  }
-
-  /* === TICKER === */
+  /* TICKER */
   .ticker-bar {
-    grid-column: 1 / -1;
-    border-top: 1px solid var(--border);
-    padding-top: 8px;
-    padding-bottom: 2px;
-    overflow: hidden;
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-shrink: 0;
+    grid-column:1/-1;
+    border-top:1px solid var(--border);
+    padding-top:7px; padding-bottom:2px;
+    overflow:hidden; display:flex; align-items:center; gap:10px; flex-shrink:0;
   }
-
   .ticker-label {
-    font-family: 'Orbitron', monospace;
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: 3px;
-    color: var(--green);
-    background: rgba(0,255,136,0.08);
-    border: 1px solid var(--border);
-    padding: 3px 8px;
-    white-space: nowrap;
-    flex-shrink: 0;
-    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%);
+    font-family:'Orbitron',monospace; font-size:7px; font-weight:700; letter-spacing:3px; color:var(--red);
+    background:rgba(255,34,51,.07); border:1px solid var(--border);
+    padding:3px 7px; white-space:nowrap; flex-shrink:0;
+    clip-path:polygon(0 0,calc(100% - 5px) 0,100% 5px,100% 100%,0 100%);
   }
-
-  .ticker-divider {
-    width: 1px;
-    height: 14px;
-    background: var(--border);
-    flex-shrink: 0;
-  }
-
-  .ticker-track {
-    flex: 1;
-    overflow: hidden;
-    position: relative;
-    height: 20px;
-  }
-
+  .ticker-divider { width:1px; height:12px; background:var(--border); flex-shrink:0; }
+  .ticker-track { flex:1; overflow:hidden; position:relative; height:18px; }
   .ticker-scroll {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    white-space: nowrap;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    animation: tickerMove linear infinite;
+    display:flex; align-items:center; white-space:nowrap;
+    position:absolute; top:50%; transform:translateY(-50%);
+    animation:tickerMove linear infinite;
   }
+  .ticker-item { font-size:9px; letter-spacing:1.5px; color:rgba(232,221,208,.9); padding:0 44px 0 0; display:inline-flex; align-items:center; gap:8px; }
+  .ticker-item::before { content:'◆'; color:var(--red); font-size:6px; opacity:.7; flex-shrink:0; }
+  .ticker-item .tip-key { color:var(--white); font-weight:bold; }
+  @keyframes tickerMove { 0%{transform:translateY(-50%) translateX(0)} 100%{transform:translateY(-50%) translateX(-50%)} }
 
-  .ticker-item {
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: rgba(0,255,136,0.75);
-    padding: 0 48px 0 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
+  /* BOTTOM */
+  .bottom-bar {
+    grid-column:1/-1; border-top:1px solid var(--border-w);
+    padding-top:10px; display:flex; align-items:center; justify-content:space-between;
+    animation:fadeIn .8s ease forwards;
   }
+  .bottom-text { font-size:8px; letter-spacing:2px; color:rgba(232,221,208,.75); }
+  .bottom-text strong { color:rgba(232,221,208,.95); }
+  .sys-clocks { display:flex; gap:18px; }
+  .clock { text-align:right; }
+  .clock-label { font-size:6px; letter-spacing:2px; color:rgba(232,221,208,.7); display:block; }
+  .clock-val { font-family:'Orbitron',monospace; font-size:10px; color:var(--white-dim); letter-spacing:2px; }
 
-  .ticker-item::before {
-    content: '◆';
-    color: var(--green);
-    font-size: 7px;
-    opacity: 0.6;
-    flex-shrink: 0;
+  /* Corners */
+  .corner { position:fixed; width:24px; height:24px; z-index:11; }
+  .corner-tl { top:6px;left:6px;    border-top:1px solid var(--red); border-left:1px solid var(--red); }
+  .corner-tr { top:6px;right:6px;   border-top:1px solid var(--red); border-right:1px solid var(--red); }
+  .corner-bl { bottom:6px;left:6px;  border-bottom:1px solid var(--red); border-left:1px solid var(--red); }
+  .corner-br { bottom:6px;right:6px; border-bottom:1px solid var(--red); border-right:1px solid var(--red); }
+
+  @keyframes fadeIn    { from{opacity:0} to{opacity:1} }
+  @keyframes slideLeft { from{opacity:0;transform:translateX(-16px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes slideRight{ from{opacity:0;transform:translateX(16px)}  to{opacity:1;transform:translateX(0)} }
+  @keyframes glitch {
+    0%,88%,100%{transform:none;text-shadow:0 0 16px var(--red),0 0 32px rgba(255,34,51,.3)}
+    89%{transform:translateX(-3px) skewX(-2deg);text-shadow:-3px 0 #00ffff,3px 0 var(--red)}
+    90%{transform:translateX(3px) skewX(2deg); text-shadow: 3px 0 #00ffff,-3px 0 var(--red)}
+    91%{transform:none}
   }
-
-  .ticker-item .tip-key {
-    color: var(--green);
-    font-weight: bold;
+  @keyframes flicker {
+    0%,94%,100%{opacity:1} 95%{opacity:.5} 96%{opacity:1} 97%{opacity:.3} 98%{opacity:1}
   }
-
-  @keyframes tickerMove {
-    0%   { transform: translateY(-50%) translateX(0); }
-    100% { transform: translateY(-50%) translateX(-50%); }
-  }
-
-
-  
-
-  
-
 </style>
 </head>
 <body>
 
 <div class="noise"></div>
+<div class="blood-vignette"></div>
 <div class="scan-sweep"></div>
-
-<!-- Corner brackets -->
 <div class="corner corner-tl"></div>
 <div class="corner corner-tr"></div>
 <div class="corner corner-bl"></div>
@@ -758,76 +342,60 @@
   <!-- TOP BAR -->
   <div class="top-bar">
     <div class="logo-block">
-      <div class="logo-main">GHOST RECONDITION</div>
-      <div class="logo-sub">GHOST RECONDITION // ZOMBIE SURVIVAL</div>
+      <div class="logo-main">Z-CITY</div>
+      <div class="logo-sub">HOMICIDE // TACTICAL COMBAT SIMULATION</div>
     </div>
     <div class="top-center">
-      <div class="op-name" id="mapName">LOADING...</div>
-      <div class="op-sub">ZOMBIE SURVIVAL PROTOCOL INITIATED</div>
+      <div class="op-name" id="mapName">LOADING MAP...</div>
+      <div class="op-sub">REALISTIC BODY DAMAGE SYSTEM ACTIVE</div>
     </div>
     <div class="top-right">
-      <div class="status-row">AUTH LEVEL: <span>GHOST ACTUAL</span></div>
-      <div class="status-row">ENCRYPT: <span>AES-256</span></div>
-      <div class="status-row">UPLINK: <span id="ping">--</span> MS</div>
+      <div class="status-row">MODE: <span id="gamemodeName">HOMICIDE</span></div>
+      <div class="status-row">REGION: <span>US-EAST</span></div>
+      <div class="status-row">PING: <span id="ping">--</span> MS</div>
     </div>
   </div>
 
   <!-- LEFT PANEL -->
   <div class="left-panel">
 
-    <!-- Agent card -->
     <div class="panel-block">
-      <div class="block-label">GHOST</div>
+      <div class="block-label">PLAYER</div>
       <div class="agent-card">
         <div class="agent-silhouette">
-          <svg viewBox="0 0 28 40">
-            <circle cx="14" cy="7" r="5"/>
-            <path d="M6 15 Q7 13 14 13 Q21 13 22 15 L24 30 H4 Z"/>
-            <line x1="4" y1="30" x2="1" y2="40"/>
-            <line x1="24" y1="30" x2="27" y2="40"/>
+          <svg viewBox="0 0 26 38">
+            <circle cx="13" cy="6" r="5"/>
+            <path d="M5 14 Q6 12 13 12 Q20 12 21 14 L23 29 H3 Z"/>
+            <line x1="3" y1="29" x2="1" y2="38"/>
+            <line x1="23" y1="29" x2="25" y2="38"/>
+            <line x1="21" y1="19" x2="26" y2="17" stroke-width="1.8"/>
           </svg>
         </div>
         <div class="agent-info">
-          <div class="agent-name" id="playerName">GHOST</div>
-          <div class="agent-rank">GR // TIER-1 GHOST</div>
-          <div class="agent-status">● ● GHOST RECONDITION ACTIVE</div>
+          <div class="agent-name" id="playerName">PLAYER</div>
+          <div class="agent-rank">ZCITY // CIVILIAN</div>
+          <div class="agent-status">● CONNECTING</div>
         </div>
       </div>
     </div>
 
-    <!-- Stats -->
     <div class="panel-block">
-      <div class="block-label">COMBAT READINESS</div>
-      <div class="mini-bar">
-        <div class="mini-bar-label">STAMINA</div>
-        <div class="mini-bar-track"><div class="mini-bar-fill" style="width:88%; animation-delay:0.2s"></div></div>
-        <div class="mini-bar-val">88%</div>
-      </div>
-      <div class="mini-bar">
-        <div class="mini-bar-label">STEALTH</div>
-        <div class="mini-bar-track"><div class="mini-bar-fill" style="width:95%; animation-delay:0.4s"></div></div>
-        <div class="mini-bar-val">95%</div>
-      </div>
-      <div class="mini-bar">
-        <div class="mini-bar-label">COMBAT</div>
-        <div class="mini-bar-track"><div class="mini-bar-fill" style="width:76%; animation-delay:0.6s"></div></div>
-        <div class="mini-bar-val">76%</div>
-      </div>
-      <div class="mini-bar">
-        <div class="mini-bar-label">TECH</div>
-        <div class="mini-bar-track"><div class="mini-bar-fill" style="width:91%; animation-delay:0.8s"></div></div>
-        <div class="mini-bar-val">91%</div>
-      </div>
+      <div class="block-label">BODY CONDITION</div>
+      <div class="organ-row"><span>BRAIN</span><span class="organ-val ok">INTACT</span></div>
+      <div class="organ-row"><span>HEART</span><span class="organ-val ok">BEATING</span></div>
+      <div class="organ-row"><span>LUNGS</span><span class="organ-val ok">CLEAR</span></div>
+      <div class="organ-row"><span>BLOOD LOSS</span><span class="organ-val ok">0 ML</span></div>
+      <div class="organ-row"><span>LIMBS</span><span class="organ-val ok">4 / 4</span></div>
+      <div class="organ-row"><span>ARMOR</span><span class="organ-val warn">NONE</span></div>
     </div>
 
-    <!-- Mission data -->
     <div class="panel-block">
-      <div class="block-label">OPERATION DATA</div>
-      <div class="data-row"><span>OBJECTIVE</span><span class="val">SURVIVE</span></div>
-      <div class="data-row"><span>CLASSIFY</span><span class="val warn">HOSTILE</span></div>
-      <div class="data-row"><span>PLAYERS</span><span class="val" id="playerCount">--</span></div>
-      <div class="data-row"><span>MAP SIZE</span><span class="val" id="mapSize">LOADING</span></div>
-      <div class="data-row"><span>EXTRACT</span><span class="val crit">NO EVAC</span></div>
+      <div class="block-label">LOADOUT</div>
+      <div class="data-row"><span>PRIMARY</span><span class="val" id="primaryWep">--</span></div>
+      <div class="data-row"><span>SECONDARY</span><span class="val">PISTOL</span></div>
+      <div class="data-row"><span>MELEE</span><span class="val">FISTS</span></div>
+      <div class="data-row"><span>MEDKIT</span><span class="val warn">x1</span></div>
+      <div class="data-row"><span>BANDAGE</span><span class="val warn">x2</span></div>
     </div>
 
   </div>
@@ -837,52 +405,50 @@
     <div class="hex-bg"></div>
 
     <div class="map-title" id="serverName">CONNECTING TO SERVER...</div>
-    <div class="map-coords" id="serverIP">◆◆◆.◆◆◆.◆◆◆.◆◆◆ : ◆◆◆◆◆</div>
+    <div class="map-coords" id="serverIP">◆◆◆.◆◆◆.◆◆◆.◆◆◆:◆◆◆◆◆</div>
 
-    <!-- Tactical compass -->
     <div class="tac-display">
       <div class="tac-ring ring-1"></div>
       <div class="tac-ring ring-2"></div>
       <div class="tac-ring ring-3"></div>
       <div class="tac-ring ring-4"></div>
-
-      <!-- Crosshairs -->
       <div class="crosshair-h"></div>
       <div class="crosshair-v"></div>
-
-      <!-- Compass labels -->
       <div class="coord-label coord-n">N</div>
       <div class="coord-label coord-s">S</div>
       <div class="coord-label coord-e">E</div>
       <div class="coord-label coord-w">W</div>
+      <div class="blip friendly"></div>
+      <div class="blip enemy"></div>
+      <div class="blip enemy"></div>
+      <div class="blip friendly"></div>
+      <div class="blip enemy"></div>
     </div>
 
-    <!-- Progress -->
     <div class="progress-section">
       <div class="progress-header">
-        <span>GHOST UPLINK</span>
+        <span>LOADING RESOURCES</span>
         <span class="progress-pct" id="pctText">0%</span>
       </div>
       <div class="progress-track">
         <div class="progress-fill" id="progressFill" style="width:0%"></div>
       </div>
       <div class="progress-segments" id="segments"></div>
-      <div class="loading-msg" id="loadMsg">ESTABLISHING SECURE CHANNEL </div>
+      <div class="loading-msg" id="loadMsg">INITIALIZING </div>
     </div>
   </div>
 
   <!-- RIGHT PANEL -->
   <div class="right-panel">
 
-    <!-- Server info -->
     <div class="panel-block">
-      <div class="block-label">GHOST RECONDITION SERVER</div>
-      <div class="server-name" id="serverDisplay">LOADING...</div>
-      <div class="data-row"><span>GAMEMODE</span><span class="val">ZOMBIE SURVIVAL</span></div>
-      <div class="data-row"><span>REGION</span><span class="val">US-EAST</span></div>
+      <div class="block-label">SERVER INFO</div>
+      <div class="server-name" id="serverDisplay">Z-CITY</div>
+      <div class="data-row"><span>GAMEMODE</span><span class="val" id="gmDisplay">HOMICIDE</span></div>
+      <div class="data-row"><span>PLAYERS</span><span class="val" id="playerCount">-- / --</span></div>
       <div class="data-row"><span>LATENCY</span><span class="val" id="latencyDisp">--</span></div>
       <div class="threat-display">
-        <div class="threat-label">ALERT</div>
+        <div class="threat-label">RISK</div>
         <div class="threat-bars">
           <div class="threat-bar l1"></div>
           <div class="threat-bar l2"></div>
@@ -890,44 +456,39 @@
           <div class="threat-bar l4"></div>
           <div class="threat-bar"></div>
         </div>
-        <div class="threat-label">LOW</div>
+        <div class="threat-label">HIGH</div>
       </div>
     </div>
 
-    <!-- Activity log -->
-    <div class="panel-block" style="flex:1; overflow:hidden;">
+    <div class="panel-block" style="flex:1;overflow:hidden;">
       <div class="block-label">SYSTEM LOG</div>
       <div class="log-lines" id="logLines"></div>
     </div>
 
-    <!-- Tactical tip -->
     <div class="panel-block">
-      <div class="block-label">GHOST DIRECTIVE</div>
-      <div class="tip-text" id="tipText">Loading directive...</div>
+      <div class="block-label">COMBAT BRIEFING</div>
+      <div style="font-size:9px;color:rgba(232,221,208,.9);letter-spacing:1px;line-height:1.5" id="tipText">Loading briefing...</div>
     </div>
 
   </div>
 
-
-  <!-- TICKER BAR -->
+  <!-- TICKER -->
   <div class="ticker-bar">
-    <div class="ticker-label">SURVIVAL INTEL</div>
+    <div class="ticker-label">COMBAT INTEL</div>
     <div class="ticker-divider"></div>
     <div class="ticker-track">
-      <div class="ticker-scroll" id="tickerScroll">
-        <!-- filled by JS -->
-      </div>
+      <div class="ticker-scroll" id="tickerScroll"></div>
     </div>
   </div>
 
   <!-- BOTTOM BAR -->
   <div class="bottom-bar">
-    <div class="tip-text">
-      <strong>CLASSIFIED //</strong> ALL OPERATIONS CLASSIFIED. SURVIVE THE HORDE. PROTECT YOUR TEAM.
+    <div class="bottom-text">
+      <strong>Z-CITY //</strong> REALISTIC BODY DAMAGE &middot; ORGAN SYSTEM &middot; RAGDOLL CONTROL &middot; 40+ FIREARMS
     </div>
     <div class="sys-clocks">
       <div class="clock">
-        <span class="clock-label">LOCAL TIME</span>
+        <span class="clock-label">LOCAL</span>
         <span class="clock-val" id="localTime">--:--:--</span>
       </div>
       <div class="clock">
@@ -940,251 +501,173 @@
 </div>
 
 <script>
-// =============================================
-// GMOD LOADING SCREEN CONFIGURATION
-// Edit these values or wire up to Lua callbacks
-// =============================================
 const CONFIG = {
-  serverName: "GHOST RECONDITION",
-  serverIP: "127.0.0.1:27015",
-  mapName: "gm_construct",
+  serverName: "Z-CITY",
+  serverIP:   "127.0.0.1:27015",
+  mapName:    "zcity_downtown",
   maxPlayers: 32,
-  gamemode: "ZOMBIE SURVIVAL"
+  gamemode:   "HOMICIDE"
 };
 
-// =============================================
-// LOADING MESSAGES
-// =============================================
+const WEAPONS = ["AK-74","AR-15","AS VAL","MP5","BERETTA M9","REMINGTON 870","DESERT EAGLE","GLOCK 17","WALTHER P99","KAR98K"];
+
 const loadMessages = [
-  "ESTABLISHING SECURE CHANNEL",
-  "AUTHENTICATING GHOST CREDENTIALS",
-  "DOWNLOADING ZOMBIE SURVIVAL MAP",
-  "SYNCHRONIZING INVENTORY MODULES",
-  "CALIBRATING NIGHT VISION",
-  "LOADING WEAPON LOADOUTS",
-  "COMPILING ENTITY INDEX",
-  "VERIFYING ENCRYPTION KEYS",
-  "INITIALIZING PHYSICS ENGINE",
-  "DOWNLOADING ADDONS",
-  "LOADING CLIENT RESOURCES",
-  "INDEXING ZOMBIE SPAWN POINTS",
-  "POPULATING SPAWN LISTS",
-  "CALCULATING SAFE ZONES",
-  "GHOST UPLINK ESTABLISHED"
+  "INITIALIZING ZCITY CLIENT",
+  "AUTHENTICATING SESSION",
+  "LOADING MAP GEOMETRY",
+  "COMPILING WEAPON MODELS",
+  "LOADING BODY PHYSICS ENGINE",
+  "SYNCING ORGAN DAMAGE TABLES",
+  "DOWNLOADING PLAYER CONTENT",
+  "INITIALIZING RAGDOLL SYSTEM",
+  "LOADING BLOOD DECAL SYSTEM",
+  "CALIBRATING BALLISTICS ENGINE",
+  "POPULATING SPAWN POINTS",
+  "LOADING ARMOR CONFIGS",
+  "SYNCING ITEM TABLES",
+  "VERIFYING SERVER INTEGRITY",
+  "CONNECTION ESTABLISHED"
 ];
 
 const tips = [
-  "Barricade entry points early. Hordes grow stronger over time.",
-  "Coordinate with your team. Call out zombie types and positions.",
-  "Ammo is scarce. Always check crates before engaging hordes.",
-  "High ground is crucial. Roof positions are defensible.",
-  "Watch for boss zombies. They can break through barricades.",
-  "Never waste med kits. Use them only when critically low.",
-  "Stick together. Lone wolves get overrun fast.",
-  "Sleeping enemies can be hidden to avoid raising alarms."
+  "Aim for the head and chest. Brain death ends you — not just HP loss.",
+  "Bleeding kills silently. Always bandage wounds before re-engaging.",
+  "Broken limbs slow you down. Protect your legs in prolonged firefights.",
+  "Armor stops penetration at its tier — you still absorb blunt force through it.",
+  "You can crawl and shoot while ragdolled. Going down doesn't mean you're out.",
+  "CPR can revive downed teammates but isn't guaranteed. Keep medics close.",
+  "Oxygen deprivation kills the brain fast. Choking and blood loss are silent killers.",
+  "High-calibre rounds penetrate thin cover. Concrete and brick are your best friends."
 ];
 
-// =============================================
-// RUNTIME STATE
-// =============================================
-let progress = 0;
-let targetProgress = 0;
-let msgIndex = 0;
+let progress = 0, targetProgress = 0;
 
-// Init segments
 const SEG_COUNT = 20;
 const segsEl = document.getElementById('segments');
 for (let i = 0; i < SEG_COUNT; i++) {
   const s = document.createElement('div');
-  s.className = 'seg';
-  s.id = 'seg' + i;
-  segsEl.appendChild(s);
+  s.className = 'seg'; s.id = 'seg' + i; segsEl.appendChild(s);
 }
 
-// Set static config
 document.getElementById('serverDisplay').textContent = CONFIG.serverName;
-document.getElementById('serverIP').textContent = CONFIG.serverIP;
-document.getElementById('mapName').textContent = CONFIG.mapName.toUpperCase();
-document.getElementById('serverName').textContent = CONFIG.serverName;
+document.getElementById('serverIP').textContent      = CONFIG.serverIP;
+document.getElementById('mapName').textContent       = CONFIG.mapName.toUpperCase();
+document.getElementById('serverName').textContent    = CONFIG.serverName;
+document.getElementById('gmDisplay').textContent     = CONFIG.gamemode;
+document.getElementById('gamemodeName').textContent  = CONFIG.gamemode;
+document.getElementById('primaryWep').textContent    = WEAPONS[Math.floor(Math.random() * WEAPONS.length)];
+document.getElementById('tipText').textContent       = tips[Math.floor(Math.random() * tips.length)];
 
-// Random tip
-document.getElementById('tipText').textContent = tips[Math.floor(Math.random() * tips.length)];
-
-// =============================================
-// PROGRESS SIMULATION (replace with GMod hooks)
-// =============================================
-function setProgress(pct, message) {
+function setProgress(pct, msg) {
   targetProgress = Math.min(100, Math.max(0, pct));
-  if (message) document.getElementById('loadMsg').textContent = message + ' ';
+  if (msg) document.getElementById('loadMsg').textContent = msg + ' ';
 }
 
-// Simulate loading
 let simStep = 0;
 const simInterval = setInterval(() => {
   simStep++;
-  const pct = Math.min(100, simStep * (100 / loadMessages.length));
-  const msg = loadMessages[Math.min(simStep - 1, loadMessages.length - 1)];
-  setProgress(pct, msg);
-  addLog(msg);
+  setProgress(Math.min(100, simStep * (100 / loadMessages.length)), loadMessages[Math.min(simStep-1, loadMessages.length-1)]);
+  addLog(loadMessages[Math.min(simStep-1, loadMessages.length-1)]);
   if (simStep >= loadMessages.length) clearInterval(simInterval);
-}, 800);
+}, 750);
 
-// Smooth progress animation
 setInterval(() => {
   if (progress < targetProgress) {
-    progress = Math.min(targetProgress, progress + 0.8);
+    progress = Math.min(targetProgress, progress + 0.9);
     document.getElementById('progressFill').style.width = progress + '%';
     document.getElementById('pctText').textContent = Math.floor(progress) + '%';
-    // Update segments
-    const activeSeg = Math.floor((progress / 100) * SEG_COUNT);
-    for (let i = 0; i < SEG_COUNT; i++) {
-      document.getElementById('seg' + i).classList.toggle('done', i < activeSeg);
-    }
+    const active = Math.floor((progress / 100) * SEG_COUNT);
+    for (let i = 0; i < SEG_COUNT; i++)
+      document.getElementById('seg'+i).classList.toggle('done', i < active);
   }
 }, 16);
 
-// =============================================
-// LOG SYSTEM
-// =============================================
 const logLines = document.getElementById('logLines');
-const LOG_TIMESTAMPS = [];
-
-function addLog(msg, type = 'ok') {
-  const now = new Date();
-  const ts = now.toTimeString().slice(0,8);
+function addLog(msg, type='ok') {
+  const ts = new Date().toTimeString().slice(0,8);
   const line = document.createElement('div');
   line.className = 'log-line';
-  line.style.animationDelay = '0ms';
   line.innerHTML = `<span class="ts">${ts}</span><span class="${type}">${msg}</span>`;
   logLines.appendChild(line);
-  // Keep max 8 lines
   while (logLines.children.length > 8) logLines.removeChild(logLines.firstChild);
-  logLines.scrollTop = logLines.scrollHeight;
 }
 
-// =============================================
-// CLOCK
-// =============================================
 function updateClocks() {
   const now = new Date();
-  const local = now.toTimeString().slice(0,8);
-  const zulu = now.toUTCString().slice(17,25);
-  document.getElementById('localTime').textContent = local;
-  document.getElementById('zuluTime').textContent = zulu;
+  document.getElementById('localTime').textContent = now.toTimeString().slice(0,8);
+  document.getElementById('zuluTime').textContent  = now.toUTCString().slice(17,25);
 }
-setInterval(updateClocks, 1000);
-updateClocks();
+setInterval(updateClocks, 1000); updateClocks();
 
-// =============================================
-// SIMULATED PING
-// =============================================
 setInterval(() => {
-  const ping = Math.floor(20 + Math.random() * 60);
-  document.getElementById('ping').textContent = ping;
+  const ping = Math.floor(15 + Math.random() * 55);
+  document.getElementById('ping').textContent        = ping;
   document.getElementById('latencyDisp').textContent = ping + ' MS';
-  document.getElementById('playerCount').textContent = Math.floor(Math.random() * 4) + 8;
+  document.getElementById('playerCount').textContent = (Math.floor(Math.random()*10)+10) + ' / ' + CONFIG.maxPlayers;
 }, 2000);
 
-// =============================================
-// GMOD LUA HOOK BRIDGE
-// Replace simulation above with these in Lua:
-// 
-// GM:LoadingScreenFunction("setProgress", percent, msg)
-// GM:LoadingScreenFunction("setPlayerName", name)
-// GM:LoadingScreenFunction("setMapName", map)
-// =============================================
 window.GameDetails = function(sv, url, map, maxp, password, svName) {
   document.getElementById('serverDisplay').textContent = svName || CONFIG.serverName;
-  document.getElementById('mapName').textContent = (map || CONFIG.mapName).toUpperCase();
-  document.getElementById('serverName').textContent = svName || CONFIG.serverName;
-  document.getElementById('serverIP').textContent = sv || CONFIG.serverIP;
+  document.getElementById('serverName').textContent    = svName || CONFIG.serverName;
+  document.getElementById('mapName').textContent       = (map || CONFIG.mapName).toUpperCase();
+  document.getElementById('serverIP').textContent      = sv   || CONFIG.serverIP;
 };
+window.SetStatusChanged = function(status) { addLog(status); document.getElementById('loadMsg').textContent = status + ' '; };
+window.DownloadFile     = function(file)   { addLog('DL: ' + file, 'ok'); };
+window.DownloadingFile  = function(file)   { document.getElementById('loadMsg').textContent = 'DOWNLOADING: ' + file + ' '; };
 
-window.SetStatusChanged = function(status) {
-  addLog(status);
-  document.getElementById('loadMsg').textContent = status + ' ';
-};
+const tickerTips = [
+  {key:"BRAIN DEATH",      tip:"You die when your brain dies — from direct damage or oxygen loss. Protect your head above all else."},
+  {key:"BLEEDING",         tip:"Untreated wounds bleed you out silently. Bandage before re-engaging or you'll die mid-fight."},
+  {key:"RAGDOLL CONTROL",  tip:"When ragdolled you can still crawl, shoot, and use items. Going down isn't always the end."},
+  {key:"ORGAN DAMAGE",     tip:"Every organ is modelled. Lung shots reduce stamina; heart shots cause rapid blood loss."},
+  {key:"ARMOR TIERS",      tip:"High-calibre rounds penetrate lighter armour. Always know your opponent's loadout before rushing."},
+  {key:"CPR",              tip:"CPR can revive downed teammates but isn't guaranteed. Keep medics close in every firefight."},
+  {key:"BROKEN LIMBS",     tip:"Leg damage slows movement. Arm damage tanks your accuracy and reduces melee effectiveness."},
+  {key:"AK-74",            tip:"The AK-74 is reliable at mid-range. Control your bursts — full-auto wastes ammo and accuracy."},
+  {key:"AS VAL",           tip:"The AS VAL is suppressed and hits hard up close. Subsonic rounds keep your position hidden."},
+  {key:"MELEE",            tip:"A clean melee strike to the head in ZCity can end a fight instantly. Don't underestimate it."},
+  {key:"POSTURE SYSTEM",   tip:"Use your posture bind to go prone. It dramatically reduces your profile and improves accuracy."},
+  {key:"AMMUNITION",       tip:"FMJ rounds penetrate soft cover; hollow point expands on impact. Match ammo type to the situation."},
+  {key:"PAIN RESPONSE",    tip:"High pain causes visual effects and slowed movement. Use painkillers to stay effective in a fight."},
+  {key:"BLOOD BAGS",       tip:"Blood bags restore blood volume quickly. Always carry one for critical situations."},
+  {key:"COVER",            tip:"Thin props and wooden doors won't stop rifle rounds. Concrete and brick walls are your best cover."},
+  {key:"HOMICIDE",         tip:"In Homicide it's every man for himself. Trust no one — your best friend is also your biggest threat."},
+  {key:"CONCUSSION",       tip:"Blunt force and explosions cause concussion — vision blurs and controls shake. Take cover and recover."},
+  {key:"CHOKING",          tip:"Neck injuries restrict airflow. The brain dies within seconds without oxygen — act immediately."},
+  {key:"TDM",              tip:"In TDM coordinate flanks with your team. Frontal pushes in ZCity maps rarely work twice."},
+  {key:"GANG WARS",        tip:"Gang Wars rewards territorial control. Hold key chokepoints early and maintain pressure on respawns."},
+  {key:"RIOT MODE",        tip:"Riot is melee-only. Use posture, positioning, and reach — not just button mashing."},
+  {key:"BERETTA PX4",      tip:"The Beretta PX4 is a solid sidearm. Keep it loaded — your primary will run dry at the worst moment."},
+  {key:"CRAWLING",         tip:"Crawling while ragdolled is slower but keeps you in the fight. Drag yourself to cover fast."},
+  {key:"OXYGEN",           tip:"Blood loss depletes oxygen to the brain. Even without a direct head shot, you can die from shock."},
+];
 
-window.DownloadFile = function(file, size) {
-  addLog('DOWNLINK: ' + file, 'ok');
-};
-
-window.DownloadingFile = function(file) {
-  document.getElementById('loadMsg').textContent = 'DOWNLOADING: ' + file + ' ';
-};
-
-  // =============================================
-  // TICKER
-  // =============================================
-  const tickerTips = [
-    { key: "CADING", tip: "Stack props tightly with no gaps. A single gap lets zombies claw through and break your cade." },
-    { key: "PROP SELECTION", tip: "Heavy props like fridges and vending machines make the best barricades. Light props break fast." },
-    { key: "FAST ZOMBIE", tip: "Fast Zombies can leap over low cades. Build tall, not just wide." },
-    { key: "HEADCRAB ZOMBIE", tip: "Headcrab Zombies are weak but swarm in numbers. Shotguns clear them efficiently at close range." },
-    { key: "WITCH", tip: "Don't shoot the Witch unless you have to. Startling her draws the entire horde to your position." },
-    { key: "AMMO", tip: "Ammo drops are limited. Pistol is your fallback — never let it run dry." },
-    { key: "ZOMBIE TEAM", tip: "If you die as a human you become a zombie. Coordinate with the zombie team to overwhelm cades." },
-    { key: "CADE SPOTS", tip: "Not all rooms are equal. Pick rooms with few entry points and solid walls for your cade." },
-    { key: "PROP PHYSICS", tip: "Props can be knocked loose by zombie damage. Keep a player watching the cade at all times." },
-    { key: "GRENADES", tip: "Frag grenades can break your own cade. Use them outside only, never inside your hold." },
-    { key: "MEDIC", tip: "Medic class heals teammates. Every good team needs at least one dedicated medic." },
-    { key: "LAST HUMAN", tip: "If you're the last human, stay mobile. Zombies will focus you — don't get cornered." },
-    { key: "POISON ZOMBIE", tip: "Poison Zombies drain your health over time. Prioritise them or the DoT will kill you mid-fight." },
-    { key: "PROP GRAB", tip: "Zombies can grab loose props and throw them at your cade. Secure every prop you place." },
-    { key: "ROUND START", tip: "The first 30 seconds decide the round. Get to your cade spot and start building immediately." },
-    { key: "ZOMBIE HORDES", tip: "Zombies win by attrition. Rotate players on cade repair duty to keep defences up longer." },
-    { key: "SUPPLY DROPS", tip: "Weapons on the ground are fair game. Grab anything useful before zombies trash the room." },
-    { key: "TANK ZOMBIE", tip: "Tank variants absorb huge damage. Aim for the head and use high-calibre weapons." },
-    { key: "COMMUNICATION", tip: "Call out which side is being attacked. Silent teams lose cades without knowing why." },
-    { key: "SUICIDE ZOMBIES", tip: "Suicide Zombies explode on death. Don't cluster up or one detonation wipes the team." },
-  ];
-
-  function buildTicker() {
-    const scroll = document.getElementById('tickerScroll');
-    // Double the tips so the loop is seamless
-    const allTips = [...tickerTips, ...tickerTips];
-    scroll.innerHTML = allTips.map(t =>
-      `<span class="ticker-item"><span class="tip-key">${t.key}:</span> ${t.tip}</span>`
-    ).join('');
-
-    // Calculate total width and set animation duration
-    requestAnimationFrame(() => {
-      const totalWidth = scroll.scrollWidth / 2;
-      const speed = 80; // px per second
-      const duration = totalWidth / speed;
-      scroll.style.animationDuration = duration + 's';
-    });
-  }
-
-  buildTicker();
-
-
-  
-
+function buildTicker() {
+  const scroll = document.getElementById('tickerScroll');
+  const all    = [...tickerTips, ...tickerTips];
+  scroll.innerHTML = all.map(t =>
+    `<span class="ticker-item"><span class="tip-key">${t.key}:</span> ${t.tip}</span>`
+  ).join('');
+  requestAnimationFrame(() => {
+    scroll.style.animationDuration = (scroll.scrollWidth / 2 / 75) + 's';
+  });
+}
+buildTicker();
 </script>
-
-
-
-
-
-
-
-
 
 <audio id="bgAudio" src="music.mp3" loop></audio>
 <script>
-  document.addEventListener('click', function() {
-    var a = document.getElementById('bgAudio');
-    if (a && a.paused) { a.volume = 0.5; a.play(); }
-  });
-  document.addEventListener('mousemove', function() {
-    var a = document.getElementById('bgAudio');
-    if (a && a.paused) { a.volume = 0.5; a.play(); }
-  });
-  window.addEventListener('load', function() {
-    var a = document.getElementById('bgAudio');
-    if (a) { a.volume = 0.5; a.play().catch(function(){}); }
-  });
+(function(){
+  var a = document.getElementById('bgAudio');
+  if (!a) return;
+  a.volume = 0.4;
+  var played = false;
+  function tryPlay(){ if(played)return; played=true; a.play().catch(function(){}); }
+  window.addEventListener('load', tryPlay);
+  document.addEventListener('click', tryPlay);
+  document.addEventListener('mousemove', tryPlay);
+})();
 </script>
 
 </html>
